@@ -1,8 +1,11 @@
 import React from 'react'
+import image from '../logo-hidralpress.png'
 
 function Header() {
     return (
-        <img src='logo-hidralpress.png' style={{backgroundColor: "#757575"}} className="App-logo" alt="logo" />
+        <div style={{ backgroundColor: "#757575", width: "100%" }}>
+            <img src={image} style={{ backgroundColor: "#757575", width: "100%" }} alt="Logo Hidralpress" />
+        </div>
     )
 }
 

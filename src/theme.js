@@ -14,6 +14,9 @@ const theme = createTheme({
     success: {
       main: '#4CAF50',
     },
+    camera: {
+      main: "#ffffff"
+    },
     text: {
       primary: '#757575',
       secondary: '#424242',
