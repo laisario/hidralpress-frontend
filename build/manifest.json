@@ -1,0 +1,9 @@
+{
+  "name": "Hidralpress",
+  "theme_color": "#2196f3",
+  "background_color": "#757575",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "."
+}
