@@ -23,7 +23,7 @@ function ButtonScreen() {
     'montagem': {icon: <ConstructionIcon />, color: 'secondary'},
     'desmontagem': {icon: <TravelExploreIcon />, color: 'primary'}
   }
-
+  const title = unescape(location?.pathname?.split('/')[2])
   return (
     <>
       <Grid container px={4} pt={2}>
@@ -31,7 +31,7 @@ function ButtonScreen() {
           <Button startIcon={<ArrowBackIcon />} onClick={handleClickGoBack}></Button>
         </Grid>
         <Grid item xs={8} display="flex" alignItems="center" justifyContent="center">
-          <Typography variant='h6'>{location?.pathname?.split('/')[2]}</Typography>
+          <Typography variant='h6'>{title}</Typography>
         </Grid>
         <Grid item xs={2} />
       </Grid>

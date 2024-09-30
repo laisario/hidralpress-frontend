@@ -15,7 +15,7 @@ function FormScreen() {
   const navigate = useNavigate()
   
   const handleClick = async () => {
-    const fullOs = `OS-${os}-${os2}`
+    const fullOs = `OS ${os}-${os2}`
     const osForm = new FormData()
     osForm.append("os", fullOs)
     setLoading(true)
@@ -59,7 +59,7 @@ function FormScreen() {
         }}
       >
         <div style={{display: 'flex', justifyContent: 'flex-start', alignItems: 'center', border: '3px solid #003366', borderRadius: '4px', padding: '6px'}}>
-          <Typography>OS - </Typography>
+          <Typography>OS </Typography>
           <input
             value={os}
             maxLength={3}
@@ -72,7 +72,7 @@ function FormScreen() {
           <Typography>-</Typography>
           <input
             required
-            maxLength={3}
+            maxLength={2}
             id="input-2"
             value={os2}
             inputmode="numeric"
@@ -90,7 +90,7 @@ function FormScreen() {
           fullWidth
           onClick={handleClick}
           sx={{ mt: 3 }}
-          disabled={!(os?.length === 3 && os2?.length === 3)}
+          disabled={!(os?.length === 3 && os2?.length === 2)}
         >
           Escolher setor
         </Button>}

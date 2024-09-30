@@ -18,7 +18,7 @@ function CameraScreen() {
   const [error, setError] = useState('')
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  const pathData = pathname?.split('/')
+  const pathData = unescape(pathname)?.split('/')
   const { stepsMapping } = useData()
 
   const removePhoto = () => {
