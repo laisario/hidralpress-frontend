@@ -3,6 +3,7 @@ import { Button, Typography, Grid, Alert } from '@mui/material'
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { useNavigate } from 'react-router-dom/dist';
 import axios from '../api';
+import Loading from '../components/Loading';
 
 const InputStyle = {'border': 'none', 'width': '20%', 'textAlign': 'center', 'outline': 'none'}
 
@@ -10,13 +11,16 @@ function FormScreen() {
   const [os, setOs] = useState(null)
   const [os2, setOs2] = useState(null)
   const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
   
   const handleClick = async () => {
     const fullOs = `OS-${os}-${os2}`
     const osForm = new FormData()
     osForm.append("os", fullOs)
+    setLoading(true)
     const response = await axios.post('/validate-os/', osForm)
+    setLoading(false)
     if (response?.data?.ok) {
       navigate(`/os/${fullOs}/setor`)
     } else {
@@ -79,7 +83,7 @@ function FormScreen() {
 
         {!!error && <Alert severity='error' sx={{mt: 1}} >{error}</Alert>}
 
-        <Button
+        {loading ? <Loading /> : <Button
           variant='contained'
           size='large'
           endIcon={<NavigateNextIcon />}
@@ -89,7 +93,7 @@ function FormScreen() {
           disabled={!(os?.length === 3 && os2?.length === 3)}
         >
           Escolher setor
-        </Button>
+        </Button>}
       </Grid>
     </Grid>
   )
