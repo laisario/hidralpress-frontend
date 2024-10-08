@@ -14,10 +14,10 @@ function FormScreen() {
   const [loading, setLoading] = useState(false)
   const [msg, setMsg] = useState(false)
   const navigate = useNavigate()
-  const { state: { status } } = useLocation()
+  const location = useLocation()
 
   useEffect(() => {
-    if (status === 'ok') {
+    if (location?.state?.status === 'ok') {
       setMsg(true)
     }
   }, [])
