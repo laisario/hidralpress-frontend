@@ -28,10 +28,10 @@ function ButtonScreen() {
     <>
       <Grid container px={4} pt={2}>
         <Grid item xs={2}>
-          <Button startIcon={<ArrowBackIcon />} onClick={handleClickGoBack}></Button>
+          <Button startIcon={<ArrowBackIcon />} size='large' onClick={handleClickGoBack}></Button>
         </Grid>
         <Grid item xs={8} display="flex" alignItems="center" justifyContent="center">
-          <Typography variant='h6'>{title}</Typography>
+          <Typography variant='h5'>{title}</Typography>
         </Grid>
         <Grid item xs={2} />
       </Grid>
@@ -45,7 +45,7 @@ function ButtonScreen() {
         <Typography variant='overline'>Selecione o setor:</Typography>
         {!!sectors?.length && sectors?.map((sector) => (
           <div key={sector?.id}>
-            <Button fullWidth size='large' startIcon={handleSector[sector?.name]?.icon} color={handleSector[sector?.name]?.color} variant='contained' onClick={() => handleClick(sector?.name)} sx={{ padding: 8 }}>{sector?.name}</Button>
+            <Button fullWidth size='large' startIcon={handleSector[sector?.name]?.icon} color={handleSector[sector?.name]?.color} variant='contained' onClick={() => handleClick(sector?.name)} sx={{ padding: 4, fontSize: '24px' }}>{sector?.name}</Button>
             <Divider sx={{ my: 2 }} />
           </div>
         ))}

@@ -1,19 +1,27 @@
-import React, { useState } from 'react'
-import { Button, Typography, Grid, Alert } from '@mui/material'
+import React, { useEffect, useState } from 'react'
+import { Button, Typography, Grid, Alert, Snackbar } from '@mui/material'
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import { useNavigate } from 'react-router-dom/dist';
+import { useLocation, useNavigate } from 'react-router-dom/dist';
 import axios from '../api';
 import Loading from '../components/Loading';
 
-const InputStyle = {'border': 'none', 'width': '20%', 'textAlign': 'center', 'outline': 'none'}
+const InputStyle = { 'border': 'none', 'width': '20%', 'textAlign': 'center', 'outline': 'none', 'fontSize': '20px' }
 
 function FormScreen() {
   const [os, setOs] = useState(null)
   const [os2, setOs2] = useState(null)
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [msg, setMsg] = useState(false)
   const navigate = useNavigate()
-  
+  const { state: { status } } = useLocation()
+
+  useEffect(() => {
+    if (status === 'ok') {
+      setMsg(true)
+    }
+  }, [])
+
   const handleClick = async () => {
     const fullOs = `OS ${os}-${os2}`
     const osForm = new FormData()
@@ -29,12 +37,20 @@ function FormScreen() {
   }
 
   const handleChangeInputOne = (e) => {
-    const { target: { value }} = e
+    const { target: { value } } = e
     setOs(value)
-    if (value.length === 3) {
+    if (value?.length === 3) {
       document.getElementById("input-2").focus()
     }
   }
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setMsg(false);
+  };
+
 
   return (
     <Grid
@@ -58,7 +74,14 @@ function FormScreen() {
           mt: 8
         }}
       >
-        <div style={{display: 'flex', justifyContent: 'flex-start', alignItems: 'center', border: '3px solid #003366', borderRadius: '4px', padding: '6px'}}>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'flex-start',
+          alignItems: 'center',
+          border: '3px solid #003366',
+          borderRadius: '4px',
+          padding: '6px',
+        }}>
           <Typography>OS </Typography>
           <input
             value={os}
@@ -81,7 +104,16 @@ function FormScreen() {
           />
         </div>
 
-        {!!error && <Alert severity='error' sx={{mt: 1}} >{error}</Alert>}
+        {!!error && <Alert severity='error' sx={{ mt: 1 }} >{error}</Alert>}
+        {msg && <Snackbar
+          open={msg}
+          autoHideDuration={5000}
+          onClose={handleClose}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+
+        >
+          <Alert severity='success' sx={{ mt: 1 }} onClose={() => setMsg('')}>Fotos enviadas com sucesso!</Alert>
+        </Snackbar>}
 
         {loading ? <Loading /> : <Button
           variant='contained'

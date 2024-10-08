@@ -8,6 +8,7 @@ import { useLocation, useNavigate } from "react-router-dom/dist";
 import axios from '../api'
 import useData from "../hooks/useData";
 import DeleteIcon from '@mui/icons-material/Delete';
+import Loading from "../components/Loading";
 
 
 function CameraScreen() {
@@ -16,14 +17,18 @@ function CameraScreen() {
   const [etapa, setEtapa] = useState('')
   const [index, setIndex] = useState(0)
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+
   const { pathname } = useLocation()
+
   const pathData = unescape(pathname)?.split('/')
+
   const { stepsMapping } = useData()
 
   const removePhoto = () => {
     const currentImg = images?.find((_, i) => i === index)
-    setImages(images.filter((image) => image?.id !== currentImg?.id))
+    setImages(images.filter((image) => image?.file?.name !== currentImg?.file?.name))
     setIndex(0)
   }
 
@@ -38,9 +43,11 @@ function CameraScreen() {
     for (let image of images) {
       data.append('images', image.file)
     }
+    setLoading(true)
     const response = await axios.post('/os/', data)
+    setLoading(false)
     if (response.status === 200) {
-      navigate("/")
+      navigate("/os",  { state: { status: 'ok' } })
     } else {
       setError('Erro ao enviar as fotos. Tente novamente e se persistir entre em contato com o Administrador.')
     }
@@ -49,9 +56,9 @@ function CameraScreen() {
   const existPhotos = !!images?.length
 
   return (
-    <Box p={2} display="flex" flexDirection="column"  height='100%' alignItems='center'>
+    <Box p={2} display="flex" flexDirection="column" height='100%' alignItems='center'>
       <div>
-        <Typography variant="subtitle1" fontWeight={700} mb={1} >Selecione a etapa que está fotografando:</Typography>
+        <Typography variant="h6" fontWeight={700} mb={1} >Selecione a etapa que está fotografando:</Typography>
         <FormControl fullWidth sx={{ mb: 3 }}>
           <InputLabel id="etapa-select">Etapa</InputLabel>
           <Select
@@ -61,14 +68,15 @@ function CameraScreen() {
             label="Etapa"
             onChange={(e) => setEtapa(e.target.value)}
             placeholder="Escolha a etapa"
+            sx={{ color: 'black' }}
           >
             {stepsMapping[pathData[4]]?.map((step) => (
-              <MenuItem value={step?.name} key={step?.id}>{step?.name}</MenuItem>
+              <MenuItem sx={{ color: 'black' }} value={step?.name} key={step?.id}>{step?.name.toUpperCase()}</MenuItem>
             ))}
           </Select>
         </FormControl>
       </div>
-      <Box sx={{ borderRadius: 1, p: 1, boxShadow: existPhotos ? '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)' : null, mb: 2}}>
+      <Box sx={{ borderRadius: 1, p: 1, boxShadow: existPhotos ? '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)' : null, mb: 2 }}>
         <Box sx={{ display: "flex", justifyContent: existPhotos ? "space-between" : "center", p: 1, alignItems: 'center' }}>
           <Button
             disabled={etapa.length < 1}
@@ -107,7 +115,9 @@ function CameraScreen() {
       {error && <Alert severity="error">{error}</Alert>}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', position: existPhotos ? 'static' : 'fixed', bottom: 10, width: '90%' }}>
         <Button variant="outlined" startIcon={<ArrowBackIcon />} onClick={handleClickGoBack}>Voltar</Button>
-        <Button endIcon={<CheckIcon />} variant="contained" onClick={handleClickSave}>Salvar</Button>
+        {loading ? <Loading /> : (
+          <Button endIcon={<CheckIcon />} variant="contained" onClick={handleClickSave}>Salvar</Button>
+        )}
       </Box>
     </Box>
   )
