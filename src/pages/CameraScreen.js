@@ -86,7 +86,7 @@ function CameraScreen() {
             fullWidth={!existPhotos}
             onClick={() => hiddenFileInput.current.click()}
           >
-            Nova foto
+            Bater foto
           </Button>
           <input
             type="file"
@@ -116,7 +116,7 @@ function CameraScreen() {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', position: existPhotos ? 'static' : 'fixed', bottom: 10, width: '90%' }}>
         <Button variant="outlined" startIcon={<ArrowBackIcon />} onClick={handleClickGoBack}>Voltar</Button>
         {loading ? <Loading /> : (
-          <Button endIcon={<CheckIcon />} variant="contained" onClick={handleClickSave}>Salvar</Button>
+          <Button endIcon={<CheckIcon />} variant="contained" onClick={handleClickSave}>Enviar</Button>
         )}
       </Box>
     </Box>
