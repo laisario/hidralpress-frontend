@@ -116,7 +116,7 @@ function CameraScreen() {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', position: existPhotos ? 'static' : 'fixed', bottom: 10, width: '90%' }}>
         <Button variant="outlined" startIcon={<ArrowBackIcon />} onClick={handleClickGoBack}>Voltar</Button>
         {loading ? <Loading /> : (
-          <Button endIcon={<CheckIcon />} variant="contained" onClick={handleClickSave}>Enviar</Button>
+          <Button endIcon={<CheckIcon />} disabled={images?.length < 1} variant="contained" onClick={handleClickSave}>Enviar</Button>
         )}
       </Box>
     </Box>
