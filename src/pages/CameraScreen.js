@@ -11,6 +11,18 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Loading from "../components/Loading";
 
 
+const steps = {
+  'desmontagem': {
+    'C-EQUIPAMENTO': 'CHEGADA',
+    'E-DESMONTADO': 'DESMONTADO',
+    'E-PRONTO': 'PRONTO'
+  },
+  'montagem': {
+    'E-MONTAGEM': 'MONTAGEM',
+    'E-TESTE': 'TESTE'
+  }
+}
+
 function CameraScreen() {
   const hiddenFileInput = useRef(null);
   const [images, setImages] = useState([])
@@ -32,6 +44,23 @@ function CameraScreen() {
     setIndex(0)
   }
 
+  const takePhoto = (e) => {
+    try {
+      setImages(images => [{
+        original: URL.createObjectURL(e.target.files[0]),
+        thumbnail: URL.createObjectURL(e.target.files[0]),
+        thumbnailHeight: "100px",
+        thumbnailWidth: "100px",
+        file: e.target.files[0]
+      },
+      ...images])
+
+    } catch (error) {
+      console.error("Erro ao capturar a foto: ", error);
+      alert("Ocorreu um erro ao tirar a foto: " + error.message + " Tente novamente.");
+    }
+  }
+
   const handleClickGoBack = () => {
     navigate(`/os/${pathData[2]}/setor`)
   }
@@ -47,7 +76,7 @@ function CameraScreen() {
     const response = await axios.post('/os/', data)
     setLoading(false)
     if (response.status === 200) {
-      navigate("/os",  { state: { status: 'ok' } })
+      navigate("/os", { state: { status: 'ok' } })
     } else {
       setError('Erro ao enviar as fotos. Tente novamente e se persistir entre em contato com o Administrador.')
     }
@@ -71,7 +100,7 @@ function CameraScreen() {
             sx={{ color: 'black' }}
           >
             {stepsMapping[pathData[4]]?.map((step) => (
-              <MenuItem sx={{ color: 'black' }} value={step?.name} key={step?.id}>{step?.name.toUpperCase()}</MenuItem>
+              <MenuItem sx={{ color: 'black' }} value={step?.name} key={step?.id}>{steps[pathData[4]][step?.name]}</MenuItem>
             ))}
           </Select>
         </FormControl>
@@ -91,7 +120,7 @@ function CameraScreen() {
           <input
             type="file"
             capture="environment"
-            onChange={(e) => setImages(images => [{ original: URL.createObjectURL(e.target.files[0]), thumbnail: URL.createObjectURL(e.target.files[0]), thumbnailHeight: "100px", thumbnailWidth: "100px", file: e.target.files[0] }, ...images])}
+            onChange={takePhoto}
             ref={hiddenFileInput}
             style={{ display: 'none' }}
           />
