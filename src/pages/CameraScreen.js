@@ -23,6 +23,13 @@ const steps = {
   }
 }
 
+const revokeImageURLs = (images) => {
+  images.forEach((image) => {
+    URL.revokeObjectURL(image?.original);
+    URL.revokeObjectURL(image?.thumbnail);
+  });
+};
+
 function CameraScreen() {
   const hiddenFileInput = useRef(null);
   const [images, setImages] = useState([])
@@ -40,28 +47,30 @@ function CameraScreen() {
 
   const removePhoto = () => {
     const currentImg = images?.find((_, i) => i === index)
-    setImages(images.filter((image) => image?.file?.name !== currentImg?.file?.name))
-    setIndex(0)
-  }
 
-  const takePhoto = (e) => {
-    try {
-      setImages(images => [{
-        original: URL.createObjectURL(e.target.files[0]),
-        thumbnail: URL.createObjectURL(e.target.files[0]),
-        thumbnailHeight: "100px",
-        thumbnailWidth: "100px",
-        file: e.target.files[0]
-      },
-      ...images])
+    if (currentImg) {
+      URL.revokeObjectURL(currentImg?.original);
+      URL.revokeObjectURL(currentImg?.thumbnail);
 
-    } catch (error) {
-      console.error("Erro ao capturar a foto: ", error);
-      alert("Ocorreu um erro ao tirar a foto: " + error.message + " Tente novamente.");
+      setImages(images.filter((image) => image?.file?.name !== currentImg?.file?.name))
+      setIndex(0)
     }
   }
 
+  const takePhoto = (e) => {
+    setImages(images => [{
+      original: URL.createObjectURL(e.target.files[0]),
+      thumbnail: URL.createObjectURL(e.target.files[0]),
+      thumbnailHeight: "100px",
+      thumbnailWidth: "100px",
+      file: e.target.files[0]
+    },
+    ...images])
+
+  }
+
   const handleClickGoBack = () => {
+    revokeImageURLs(images);
     navigate(`/os/${pathData[2]}/setor`)
   }
   const handleClickSave = async () => {
@@ -69,17 +78,29 @@ function CameraScreen() {
     data.append('os', pathData[2])
     data.append('sector', pathData[4])
     data.append('step', etapa)
-    for (let image of images) {
-      data.append('images', image.file)
-    }
+
+    images.forEach((image) => {
+      data.append('images', image.file);
+    });
+
     setLoading(true)
-    const response = await axios.post('/os/', data)
-    setLoading(false)
-    if (response.status === 200) {
-      navigate("/os", { state: { status: 'ok' } })
-    } else {
-      setError('Erro ao enviar as fotos. Tente novamente e se persistir entre em contato com o Administrador.')
+
+    try {
+      const response = await axios.post('/os/', data)
+      setLoading(false)
+      revokeImageURLs(images);
+      if (response.status === 200) {
+        navigate("/os", { state: { status: 'ok' } })
+      } else {
+        setError('Erro ao enviar as fotos. Tente novamente e se persistir entre em contato com o Administrador.')
+      }
+
+    } catch (error) {
+      setLoading(false);
+      setError('Erro ao enviar as fotos. Tente novamente e se persistir, entre em contato com o Administrador.');
+      revokeImageURLs(images);
     }
+
   }
 
   const existPhotos = !!images?.length
@@ -152,4 +173,4 @@ function CameraScreen() {
   )
 }
 
-export default CameraScreen
+export default CameraScreen;
