@@ -4,6 +4,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { useLocation, useNavigate } from 'react-router-dom/dist';
 import axios from '../api';
 import Loading from '../components/Loading';
+import Footer from '../components/Footer';
 
 const InputStyle = { 'border': 'none', 'width': '20%', 'textAlign': 'center', 'outline': 'none', 'fontSize': '20px' }
 
@@ -53,81 +54,84 @@ function FormScreen() {
 
 
   return (
-    <Grid
-      container
-      sx={{ mt: 8, p: 4 }}
-    >
-      <Grid item xs={12}>
-        <Typography align='center' variant="h5" fontWeight={900}>Preencha o campo com o número da ordem de serviço:</Typography>
-      </Grid>
+    <>
       <Grid
         container
-        item
-        xs={12}
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          borderRadius: "4pt",
-          padding: "16pt",
-          textAlign: "left",
-          width: "100%",
-          mt: 8
-        }}
+        sx={{ mt: 8, p: 4 }}
       >
-        <div style={{
-          display: 'flex',
-          justifyContent: 'flex-start',
-          alignItems: 'center',
-          border: '3px solid #003366',
-          borderRadius: '4px',
-          padding: '6px',
-        }}>
-          <Typography>OS </Typography>
-          <input
-            value={os}
-            maxLength={3}
-            autoFocus
-            style={InputStyle}
-            id="input-1"
-            inputmode="numeric"
-            onChange={handleChangeInputOne}
-          />
-          <Typography>-</Typography>
-          <input
-            required
-            maxLength={2}
-            id="input-2"
-            value={os2}
-            inputmode="numeric"
-            style={InputStyle}
-            onChange={(e) => setOs2(e.target.value)}
-          />
-        </div>
-
-        {!!error && <Alert severity='error' sx={{ mt: 1 }} >{error}</Alert>}
-        {msg && <Snackbar
-          open={msg}
-          autoHideDuration={5000}
-          onClose={handleClose}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-
+        <Grid item xs={12}>
+          <Typography align='center' variant="h5" fontWeight={900}>Preencha o campo com o número da ordem de serviço:</Typography>
+        </Grid>
+        <Grid
+          container
+          item
+          xs={12}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            borderRadius: "4pt",
+            padding: "16pt",
+            textAlign: "left",
+            width: "100%",
+            mt: 8
+          }}
         >
-          <Alert severity='success' sx={{ mt: 1 }} onClose={() => setMsg('')}>Fotos enviadas com sucesso!</Alert>
-        </Snackbar>}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            border: '3px solid #003366',
+            borderRadius: '4px',
+            padding: '6px',
+          }}>
+            <Typography>OS </Typography>
+            <input
+              value={os}
+              maxLength={3}
+              autoFocus
+              style={InputStyle}
+              id="input-1"
+              inputmode="numeric"
+              onChange={handleChangeInputOne}
+            />
+            <Typography>-</Typography>
+            <input
+              required
+              maxLength={2}
+              id="input-2"
+              value={os2}
+              inputmode="numeric"
+              style={InputStyle}
+              onChange={(e) => setOs2(e.target.value)}
+            />
+          </div>
 
-        {loading ? <Loading /> : <Button
-          variant='contained'
-          size='large'
-          endIcon={<NavigateNextIcon />}
-          fullWidth
-          onClick={handleClick}
-          sx={{ mt: 3 }}
-          disabled={!(os?.length === 3 && os2?.length === 2)}
-        >
-          Escolher setor
-        </Button>}
+          {!!error && <Alert severity='error' sx={{ mt: 1 }} >{error}</Alert>}
+          {msg && <Snackbar
+            open={msg}
+            autoHideDuration={5000}
+            onClose={handleClose}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+
+          >
+            <Alert severity='success' sx={{ mt: 1 }} onClose={() => setMsg('')}>Fotos enviadas com sucesso!</Alert>
+          </Snackbar>}
+
+          {loading ? <Loading /> : <Button
+            variant='contained'
+            size='large'
+            endIcon={<NavigateNextIcon />}
+            fullWidth
+            onClick={handleClick}
+            sx={{ mt: 3 }}
+            disabled={!(os?.length === 3 && os2?.length === 2)}
+          >
+            Escolher setor
+          </Button>}
+        </Grid>
       </Grid>
-    </Grid>
+      <Footer />
+    </>
   )
 }
 

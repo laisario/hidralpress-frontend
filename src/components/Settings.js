@@ -2,13 +2,19 @@ import { Box, Button, Dialog, DialogContent, DialogContentText, Typography } fro
 import React, { useEffect, useRef, useState } from 'react'
 import axios from '../api';
 
-function CircularProgressWithTimer({isLoading, handleClose, intervalRef}) {
+
+function Settings({ open, handleClose }) {
     const averageTime = 50
     const totalTime = averageTime * 60;
+    const [isLoading, setIsLoading] = useState(false)
     const [timeLeft, setTimeLeft] = useState(totalTime);
     const [hours, setHours] = useState(0);
     const [minutes, setMinutes] = useState(0);
     const [seconds, setSeconds] = useState(0);
+    const intervalRef = useRef(null);
+    const intervalIdRef = useRef(null);
+    const percentageComplete = ((totalTime - timeLeft) / totalTime) * 100;
+    
     const tick = () => {
         setSeconds((prevSeconds) => {
             if (prevSeconds === 59) {
@@ -28,69 +34,27 @@ function CircularProgressWithTimer({isLoading, handleClose, intervalRef}) {
     const startTimer = () => {
         intervalRef.current = setInterval(tick, 1000);
     }
-    
-    useEffect(() => {
-        if (seconds === 15) {
-            clearInterval(intervalRef.current)
-            handleClose()
-        }
-    }, [seconds])
-    
-    
+        
     useEffect(() => {
         if (timeLeft <= 0) {
             startTimer()
             return
         }
-        const intervalId = setInterval(() => {
+        intervalIdRef.current = setInterval(() => {
             setTimeLeft((prevTime) => Math.max(prevTime - 1, 0));
         }, 1000);
-        
-        return () => clearInterval(intervalId);
+    
+        return () => clearInterval(intervalIdRef.current);
     }, [timeLeft]);
     
-    const percentageComplete = ((totalTime - timeLeft) / totalTime) * 100;
-    
-    return (
-        <Box sx={{ position: 'relative', display: 'inline-flex', mt: 2 }}>
-            <Box
-                sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: '100%',
-                    flexDirection: 'column',
-                    gap: 2
-                }}
-                >
-                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                    {percentageComplete === 100 && !isLoading ? 'Atualização completa' : `${percentageComplete.toFixed(2)}% da média: 50 min`}
-                </Typography>
-                {timeLeft <= 0 && (
-                    <Typography variant='caption' color="red">
-                            Tempo excedente
-                            {'  '}
-                            {String(hours).padStart(2, '0')}:
-                            {String(minutes).padStart(2, '0')}:
-                            {String(seconds).padStart(2, '0')}
-                        </Typography>
-                )}
-            </Box>
-        </Box>
-    );
-}
-
-function Settings({ open, handleClose }) {
-    const intervalRef = useRef(null);
-    const [isLoading, setIsLoading] = useState(false)
     const handleUpdate = async () => {
         setIsLoading(true);
-        const response = await axios.post('os/execute_update_os/');
-        console.log(response)
+        await axios.post('os/execute_update_os/');
+        clearInterval(intervalIdRef.current)
         clearInterval(intervalRef.current)
         setIsLoading(false);
         handleClose()
-      }
+    }
     return (
         <Dialog
             open={open}
@@ -105,7 +69,31 @@ function Settings({ open, handleClose }) {
                 }}>
                 <DialogContentText>Clique caso tenha aberto uma OS com o sistema fora do ar</DialogContentText>
                 {isLoading
-                    ? <CircularProgressWithTimer intervalRef={intervalRef} isLoading={isLoading} />
+                    ? <Box sx={{ position: 'relative', display: 'inline-flex', mt: 2 }}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: '100%',
+                                flexDirection: 'column',
+                                gap: 2
+                            }}
+                        >
+                            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                                {percentageComplete === 100 && !isLoading ? 'Atualização completa' : `${percentageComplete.toFixed(2)}% da média: 50 min`}
+                            </Typography>
+                            {timeLeft <= 0 && (
+                                <Typography variant='caption' color="red">
+                                    Tempo excedente
+                                    {'  '}
+                                    {String(hours).padStart(2, '0')}:
+                                    {String(minutes).padStart(2, '0')}:
+                                    {String(seconds).padStart(2, '0')}
+                                </Typography>
+                            )}
+                        </Box>
+                    </Box>
                     : <Button sx={{ mt: 2 }} onClick={handleUpdate} variant='contained' autoFocus>Atualizar OS's</Button>}
             </DialogContent>
         </Dialog>
