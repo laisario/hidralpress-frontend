@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import SettingsIcon from '@mui/icons-material/Settings';
 import Settings from './Settings';
 
-function Footer() {
+function Footer({setErrMsg}) {
   const [open, setOpen] = useState(false)
   const handleClose = () => setOpen(false)
   const handleOpen = () => setOpen(true)
@@ -15,7 +15,7 @@ function Footer() {
       <IconButton onClick={handleOpen} sx={{ mb: 3 }}>
         <SettingsIcon />
       </IconButton>
-      <Settings open={open} handleClose={handleClose} />
+      <Settings open={open} setErrMsg={setErrMsg} handleClose={handleClose} />
     </Box>
   )
 }

@@ -1,9 +1,9 @@
-import { Box, Button, Dialog, DialogContent, DialogContentText, Typography } from '@mui/material'
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, IconButton, Typography } from '@mui/material'
 import React, { useEffect, useRef, useState } from 'react'
 import axios from '../api';
 
 
-function Settings({ open, handleClose }) {
+function Settings({ open, handleClose, setErrMsg}) {
     const averageTime = 50
     const totalTime = averageTime * 60;
     const [isLoading, setIsLoading] = useState(false)
@@ -14,7 +14,7 @@ function Settings({ open, handleClose }) {
     const intervalRef = useRef(null);
     const intervalIdRef = useRef(null);
     const percentageComplete = ((totalTime - timeLeft) / totalTime) * 100;
-    
+
     const tick = () => {
         setSeconds((prevSeconds) => {
             if (prevSeconds === 59) {
@@ -30,11 +30,11 @@ function Settings({ open, handleClose }) {
             return prevSeconds + 1;
         });
     };
-    
+
     const startTimer = () => {
         intervalRef.current = setInterval(tick, 1000);
     }
-        
+
     useEffect(() => {
         if (timeLeft <= 0) {
             startTimer()
@@ -43,18 +43,27 @@ function Settings({ open, handleClose }) {
         intervalIdRef.current = setInterval(() => {
             setTimeLeft((prevTime) => Math.max(prevTime - 1, 0));
         }, 1000);
-    
+
         return () => clearInterval(intervalIdRef.current);
     }, [timeLeft]);
-    
+
     const handleUpdate = async () => {
         setIsLoading(true);
-        await axios.post('os/execute_update_os/');
-        clearInterval(intervalIdRef.current)
-        clearInterval(intervalRef.current)
-        setIsLoading(false);
-        handleClose()
+        try {
+            await axios.post('os/execute_update_os/');
+            clearInterval(intervalIdRef.current)
+            clearInterval(intervalRef.current)
+            setIsLoading(false);
+            handleClose()
+            
+        } catch (error) {
+            console.log(error)
+            setErrMsg("Erro ao atualizar os's, verifique a conexão com a rede e tente novamente.")
+            handleClose()
+        }
     }
+
+
     return (
         <Dialog
             open={open}
@@ -67,7 +76,12 @@ function Settings({ open, handleClose }) {
                     justifyContent: "center",
                     alignItems: 'center'
                 }}>
-                <DialogContentText>Clique caso tenha aberto uma OS com o sistema fora do ar</DialogContentText>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', m: 0, p: 0 }}>
+                    <DialogContentText>Clique caso tenha aberto uma OS com o sistema fora do ar</DialogContentText>
+                    <IconButton onClick={handleClose}>
+                        x
+                    </IconButton>
+                </Box>
                 {isLoading
                     ? <Box sx={{ position: 'relative', display: 'inline-flex', mt: 2 }}>
                         <Box
