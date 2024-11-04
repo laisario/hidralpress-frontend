@@ -29,12 +29,19 @@ function FormScreen() {
     const osForm = new FormData()
     osForm.append("os", fullOs)
     setLoading(true)
-    const response = await axios.post('/validate-os/', osForm)
-    setLoading(false)
-    if (response?.data?.ok) {
-      navigate(`/os/${fullOs}/setor`)
-    } else {
-      setError(`Pasta '${fullOs}' não encontrada.`)
+    try {
+      const response = await axios.post('/validate-os/', osForm)
+      setLoading(false)
+      if (response?.data?.ok) {
+        navigate(`/os/${fullOs}/setor`)
+      } else {
+        setError(`Pasta '${fullOs}' não encontrada.`)
+      }
+    } catch (error) {
+      console.log(error)
+      setLoading(false)
+      setError('Não foi possível realizar esta operação. Verifique se o sistema está no ar.')
+      
     }
   }
 
