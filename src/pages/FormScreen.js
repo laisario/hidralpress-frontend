@@ -14,7 +14,6 @@ function FormScreen() {
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
   const [msg, setMsg] = useState(false)
-  const [errMsg, setErrMsg] = useState("")
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -137,9 +136,8 @@ function FormScreen() {
             Escolher setor
           </Button>}
         </Grid>
-      {!!errMsg && <Typography variant='caption' textAlign="center" color="red">{errMsg}</Typography>}
       </Grid>
-      <Footer setErrMsg={setErrMsg} />
+      <Footer />
     </>
   )
 }
