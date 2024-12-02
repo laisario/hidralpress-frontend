@@ -24,6 +24,7 @@ function ButtonScreen() {
     'desmontagem': {icon: <TravelExploreIcon />, color: 'primary'}
   }
   const title = unescape(location?.pathname?.split('/')[2])
+  console.log(sectors)
   return (
     <>
       <Grid container px={4} pt={2}>
