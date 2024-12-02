@@ -8,6 +8,7 @@ const axios = _axios.create({
     headers: {
         'Content-Type': 'multipart/form-data',
         'ngrok-skip-browser-warning': true,
+        'User-Agent': 'CustomAgent/1.0',
     }
 });
 
