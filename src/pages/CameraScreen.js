@@ -11,6 +11,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Loading from "../components/Loading";
 
 
+
 const steps = {
   'desmontagem': {
     'C-EQUIPAMENTO': 'CHEGADA',
@@ -52,7 +53,7 @@ function CameraScreen() {
       URL.revokeObjectURL(currentImg?.original);
       URL.revokeObjectURL(currentImg?.thumbnail);
 
-      setImages(images.filter((image) => image?.file?.name !== currentImg?.file?.name))
+      setImages((oldImages) => oldImages?.filter((image) => image?.file?.name !== currentImg?.file?.name))
       setIndex(0)
     }
   }
