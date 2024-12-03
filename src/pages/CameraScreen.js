@@ -62,8 +62,8 @@ function CameraScreen() {
     setImages(images => [{
       original: URL.createObjectURL(e.target.files[0]),
       thumbnail: URL.createObjectURL(e.target.files[0]),
-      thumbnailHeight: "100px",
-      thumbnailWidth: "100px",
+      thumbnailHeight: "256px",
+      thumbnailWidth: "144px",
       file: e.target.files[0]
     },
     ...images])
