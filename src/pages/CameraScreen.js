@@ -160,6 +160,8 @@ function CameraScreen() {
             showIndex
             showThumbnails
             items={images}
+            thumbnailHeight="144px"
+            thumbnailWidth="256px"
           />
         )}
       </Box>
