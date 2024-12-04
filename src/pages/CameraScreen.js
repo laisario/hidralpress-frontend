@@ -47,7 +47,7 @@ function CameraScreen() {
   const { stepsMapping } = useData()
 
   const removePhoto = () => {
-    const currentImg = images.find((img) => img.original === selectedImage?.original);
+    const currentImg = images.find((img) => img?.original === selectedImage?.original);
 
     if (currentImg) {
       revokeImageURLs([currentImg])
@@ -102,7 +102,13 @@ function CameraScreen() {
 
   }
 
-  useEffect(() => () => revokeImageURLs(images), [images])
+  useEffect(() => {
+    return () => revokeImageURLs(images)
+  }, [])
+
+  useEffect(() => {
+    setSelectedImage(images[0])
+  }, [images])
 
   return (
     <Box p={2} display="flex" flexDirection="column" height='100%' alignItems='center'>
@@ -139,6 +145,7 @@ function CameraScreen() {
           </Button>
           <input
             type="file"
+            accept="image/*,video/*"
             capture="environment"
             onChange={takePhoto}
             ref={hiddenFileInput}

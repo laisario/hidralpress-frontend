@@ -2,7 +2,6 @@ import React from 'react';
 import { Box, Typography } from '@mui/material';
 
 const ImageGallery = ({ images, selectedImage, setSelectedImage }) => {
-    console.log(selectedImage)
     return (
         <Box sx={{ width: '90svw', margin: '0 auto', textAlign: 'center' }}>
             <Box sx={{ marginBottom: 2 }}>
@@ -47,9 +46,9 @@ const ImageGallery = ({ images, selectedImage, setSelectedImage }) => {
                             cursor: 'pointer',
                             borderRadius: '8px',
                             overflow: 'hidden',
-                            border: selectedImage === img?.original ? '3px solid #003366' : 'none',
+                            border: selectedImage?.original === img?.original ? '3px solid #003366' : 'none',
                             boxShadow:
-                                selectedImage === img?.original
+                                selectedImage?.original === img?.original
                                     ? '0 0 10px rgba(0, 51, 102, 0.7)'
                                     : 'none',
                             transition: 'transform 0.2s, border 0.2s',
