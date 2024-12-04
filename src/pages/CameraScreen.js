@@ -1,15 +1,14 @@
-import { Alert, Box, Button, FormControl, IconButton, InputLabel, MenuItem, Select, Typography } from "@mui/material";
-import React, { useState, useRef } from "react";
+import { Alert, Box, Button, FormControl, IconButton, ImageList, ImageListItem, InputLabel, MenuItem, Select, Typography } from "@mui/material";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import CheckIcon from '@mui/icons-material/Check';
-import ImageGallery from "react-image-gallery";
 import { useLocation, useNavigate } from "react-router-dom/dist";
 import axios from '../api'
 import useData from "../hooks/useData";
 import DeleteIcon from '@mui/icons-material/Delete';
 import Loading from "../components/Loading";
-
+import ImageGallery from "../components/ImageGallery";
 
 
 const steps = {
@@ -35,45 +34,44 @@ function CameraScreen() {
   const hiddenFileInput = useRef(null);
   const [images, setImages] = useState([])
   const [etapa, setEtapa] = useState('')
-  const [index, setIndex] = useState(0)
+  const [selectedImage, setSelectedImage] = useState(images[0]);
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const navigate = useNavigate()
 
+  const navigate = useNavigate()
   const { pathname } = useLocation()
 
-  const pathData = unescape(pathname)?.split('/')
+  const pathData = useMemo(() => unescape(pathname)?.split('/'), [pathname])
+  const existPhotos = useMemo(() => !!images?.length, [images])
 
   const { stepsMapping } = useData()
 
   const removePhoto = () => {
-    const currentImg = images?.find((_, i) => i === index)
+    const currentImg = images.find((img) => img.original === selectedImage?.original);
 
     if (currentImg) {
-      URL.revokeObjectURL(currentImg?.original);
-      URL.revokeObjectURL(currentImg?.thumbnail);
-
-      setImages((oldImages) => oldImages?.filter((image) => image?.file?.name !== currentImg?.file?.name))
-      setIndex(0)
+      revokeImageURLs([currentImg])
+      setImages((oldImages) => oldImages?.
+        filter((image) => image?.file?.name !== currentImg?.file?.name))
+      const nextIndex = images.indexOf(currentImg) + 1;
+      const newSelectedImage =
+        images[nextIndex]|| images[0] || null;
+      setSelectedImage(newSelectedImage);
     }
   }
 
   const takePhoto = (e) => {
     setImages(images => [{
       original: URL.createObjectURL(e.target.files[0]),
-      thumbnail: URL.createObjectURL(e.target.files[0]),
-      thumbnailHeight: "256px",
-      thumbnailWidth: "144px",
       file: e.target.files[0]
-    },
-    ...images])
-
+    }, ...images])
   }
 
   const handleClickGoBack = () => {
     revokeImageURLs(images);
-    navigate(`/os/${pathData[2]}/setor`)
+    navigate(-1)
   }
+
   const handleClickSave = async () => {
     const data = new FormData()
     data.append('os', pathData[2])
@@ -104,7 +102,7 @@ function CameraScreen() {
 
   }
 
-  const existPhotos = !!images?.length
+  useEffect(() => () => revokeImageURLs(images), [images])
 
   return (
     <Box p={2} display="flex" flexDirection="column" height='100%' alignItems='center'>
@@ -152,18 +150,31 @@ function CameraScreen() {
             </IconButton>
           )}
         </Box>
-        {existPhotos && (
-          <ImageGallery
-            onSlide={(index) => setIndex(index)}
-            showPlayButton={false}
-            infinite={false}
-            showIndex
-            showThumbnails
-            items={images}
-            thumbnailHeight="144px"
-            thumbnailWidth="256px"
+        {existPhotos && <ImageGallery
+            images={images}
+            selectedImage={selectedImage}
+            setSelectedImage={setSelectedImage}
           />
-        )}
+        // <Box sx={{ width: '90svw' }}>
+        //   <ImageList
+        //     sx={{ width: "100%", height: 450 }}
+        //     cols={2}
+        //     rowHeight={164}
+        //     gap={4}
+        //   >
+        //     {images?.map((img, i) => (
+        //       <ImageListItem key={img?.original}>
+        //         <img
+        //           src={img.original}
+        //           alt={`image ${i + 1}`}
+        //           width="100%"
+        //           loading="lazy"
+        //         />
+        //       </ImageListItem>
+        //     ))}
+        //   </ImageList>
+        //  </Box>
+        }
       </Box>
       {error && <Alert severity="error">{error}</Alert>}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', position: existPhotos ? 'static' : 'fixed', bottom: 10, width: '90%' }}>
