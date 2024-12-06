@@ -163,11 +163,11 @@ function CameraScreen() {
             </IconButton>
           )}
         </Box>
-        {existPhotos && <ImageGallery
+        {/* {existPhotos && <ImageGallery
           images={images}
           selectedImage={selectedImage}
           setSelectedImage={setSelectedImage}
-        />}
+        />} */}
       </Box>
       {error && <Alert severity="error">{error}</Alert>}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', position: existPhotos ? 'static' : 'fixed', bottom: 10, width: '90%' }}>
