@@ -10,10 +10,10 @@ function ButtonScreen() {
   const navigate = useNavigate()
   const location = useLocation()
   const { sectors } = useData()
-  console.log(sectors)
+  const os = unescape(location?.pathname?.split('/')[2])
 
   const handleClick = (sector) => {
-    navigate(`${sector}/camera`)
+    navigate(`${sector}/camera`, { state: { os, } })
   }
 
   const handleClickGoBack = () => {
@@ -24,8 +24,6 @@ function ButtonScreen() {
     'montagem': {icon: <ConstructionIcon />, color: 'secondary'},
     'desmontagem': {icon: <TravelExploreIcon />, color: 'primary'}
   }
-  const title = unescape(location?.pathname?.split('/')[2])
-  console.log(sectors)
   return (
     <>
       <Grid container px={4} pt={2}>
@@ -33,7 +31,7 @@ function ButtonScreen() {
           <Button startIcon={<ArrowBackIcon />} size='large' onClick={handleClickGoBack}></Button>
         </Grid>
         <Grid item xs={8} display="flex" alignItems="center" justifyContent="center">
-          <Typography variant='h5'>{title}</Typography>
+          <Typography variant='h5'>{os}</Typography>
         </Grid>
         <Grid item xs={2} />
       </Grid>

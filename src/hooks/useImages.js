@@ -1,11 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import axios from '../api';
 
 const fetchImages = async (step, os) => {
-  const { data } = await axios.get('/images', {
-    params: { step, os, },
-  });
-  return data;
+  if (step && os) {
+
+    const { data } = await axios.get('/images', {
+      params: { step, os, },
+    });
+    return data;
+  }
 };
 
 const useImages = ({ step, os }) => {

@@ -2,12 +2,13 @@ import React from 'react';
 import { Box, Typography } from '@mui/material';
 
 const ImageGallery = ({ images, selectedImage, setSelectedImage }) => {
+  console.log(images[0]?.image)
   return (
     <Box sx={{ width: '90svw', margin: '0 auto', textAlign: 'center' }}>
       <Box sx={{ marginBottom: 2 }}>
-        {selectedImage?.url ? (
+        {true ? (
           <img
-            src={selectedImage?.url}
+            src={images[0]?.image?.replace("http://", "https://")}
             alt="Selected"
             style={{
               width: '100%',
@@ -15,7 +16,6 @@ const ImageGallery = ({ images, selectedImage, setSelectedImage }) => {
               objectFit: 'contain',
               borderRadius: '8px',
             }}
-            loading="lazy"
           />
         ) : (
           <Typography variant="h6" color="text.secondary">
@@ -37,7 +37,7 @@ const ImageGallery = ({ images, selectedImage, setSelectedImage }) => {
       >
         {images?.map((img, i) => (
           <Box
-            key={img?.url}
+            key={img?.image}
             onClick={() => setSelectedImage(img)}
             sx={{
               flex: '0 0 auto',
@@ -46,9 +46,9 @@ const ImageGallery = ({ images, selectedImage, setSelectedImage }) => {
               cursor: 'pointer',
               borderRadius: '8px',
               overflow: 'hidden',
-              border: selectedImage?.url === img?.url ? '3px solid #003366' : 'none',
+              border: selectedImage?.image === img?.image ? '3px solid #003366' : 'none',
               boxShadow:
-                selectedImage?.url === img?.url
+                selectedImage?.image === img?.image
                   ? '0 0 10px rgba(0, 51, 102, 0.7)'
                   : 'none',
               transition: 'transform 0.2s, border 0.2s',
@@ -57,7 +57,7 @@ const ImageGallery = ({ images, selectedImage, setSelectedImage }) => {
               },
             }}
           >
-            <Typography>{i + 1}º foto</Typography>
+            <Typography key={img?.id}>{i + 1}º foto</Typography>
           </Box>
         ))}
       </Box>

@@ -36,16 +36,14 @@ const steps = {
 
 function CameraScreen() {
   const hiddenFileInput = useRef(null);
-  const [etapa, setEtapa] = useState('')
+  const [step, setStep] = useState('')
   const [selectedImage, setSelectedImage] = useState();
   const { handleSubmit, loading, error } = useSubmitData()
   const navigate = useNavigate()
-  const { pathname } = useLocation()
+  const { pathname, state } = useLocation()
   const pathData = useMemo(() => unescape(pathname)?.split('/'), [pathname])
   const { stepsMapping } = useData()
-  const step = pathData[4]
-  const os = "OS 999-24"
-  const { images } = useImages({step, os})
+  const { images } = useImages({step, os: state?.os})
   const existPhotos = useMemo(() => !!images?.length, [images])
   
   const removePhoto = () => {
@@ -75,7 +73,7 @@ function CameraScreen() {
     const data = new FormData();
     data.append('os', pathData[2]);
     data.append('sector', pathData[4]);
-    data.append('step', etapa);
+    data.append('step', step);
     data.append('image', image?.file);
 
     handleSubmit(data)
@@ -110,11 +108,11 @@ function CameraScreen() {
     // }
 
   }
-  console.log(images)
 
-  // useEffect(() => {
-  //   setSelectedImage(images[0])
-  // }, [images])
+  useEffect(() => {
+    if (step && images?.length)
+    setSelectedImage(images[0])
+  }, [images, step])
 
   return (
     <Box p={2} display="flex" flexDirection="column" height='100%' alignItems='center'>
@@ -125,9 +123,9 @@ function CameraScreen() {
           <Select
             labelId="etapa-select"
             id="etapa-select"
-            value={etapa}
+            value={step}
             label="Etapa"
-            onChange={(e) => setEtapa(e.target.value)}
+            onChange={(e) => setStep(e.target.value)}
             placeholder="Escolha a etapa"
             sx={{ color: 'black' }}
           >
@@ -140,7 +138,7 @@ function CameraScreen() {
       <Box sx={{ borderRadius: 1, p: 1, boxShadow: existPhotos ? '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)' : null, mb: 2 }}>
         <Box sx={{ display: "flex", justifyContent: existPhotos ? "space-between" : "center", p: 1, alignItems: 'center' }}>
           <Button
-            disabled={etapa.length < 1}
+            disabled={step.length < 1}
             variant="contained"
             size="large"
             startIcon={<AddAPhotoIcon />}
@@ -163,14 +161,14 @@ function CameraScreen() {
             </IconButton>
           )}
         </Box>
-        {/* {existPhotos && <ImageGallery
+        {existPhotos && step && <ImageGallery
           images={images}
           selectedImage={selectedImage}
           setSelectedImage={setSelectedImage}
-        />} */}
+        />}
       </Box>
       {error && <Alert severity="error">{error}</Alert>}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', position: existPhotos ? 'static' : 'fixed', bottom: 10, width: '90%' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', position: 'fixed', bottom: 10, width: '90%' }}>
         <Button variant="outlined" startIcon={<ArrowBackIcon />} onClick={handleClickGoBack}>Voltar</Button>
         {loading ? <Loading /> : (
           <Button endIcon={<CheckIcon />} disabled={images?.length < 1} variant="contained" onClick={handleClickSave}>Enviar</Button>
