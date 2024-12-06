@@ -23,7 +23,7 @@ const useImages = ({ step, os }) => {
   });
 
   const deleteImg = async (imgId) => {
-    const response = await axios.delete(`image/${imgId}`);
+    const response = await axios.delete(`images/${imgId}`);
     return response.data;
   }
 
