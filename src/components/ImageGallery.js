@@ -8,7 +8,7 @@ const ImageGallery = ({ images, selectedImage, setSelectedImage }) => {
       <Box sx={{ marginBottom: 2 }}>
         {true ? (
           <img
-            src={images[0]?.image?.replace("http://", "https://")}
+            src={images[0]?.image}
             alt="Selected"
             style={{
               width: '100%',
