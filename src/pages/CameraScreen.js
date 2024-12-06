@@ -2,7 +2,6 @@ import {
   Alert,
   Box,
   Button,
-  CircularProgress,
   FormControl,
   IconButton,
   InputLabel,
@@ -46,7 +45,7 @@ function CameraScreen() {
   const { stepsMapping } = useData()
   const { images, deleteImage, isDeleting } = useImages({ step, os: state?.os })
   const existPhotos = useMemo(() => !!images?.length, [images])
-
+  console.log(images)
   const removePhoto = () => {
     deleteImage(selectedImage?.id)
   }
@@ -76,7 +75,7 @@ function CameraScreen() {
   }
 
   return (
-    <Box p={2} display="flex" flexDirection="column" height='100%' alignItems='center'>
+    <Box p={2} display="flex" flexDirection="column" height='100svh' alignItems='center' justifyContent="space-between">
       <div>
         <Typography variant="h6" fontWeight={700} mb={1} >Selecione a etapa que está fotografando:</Typography>
         <FormControl fullWidth sx={{ mb: 3 }}>
@@ -131,7 +130,7 @@ function CameraScreen() {
         />}
       </Box>
       {error && <Alert severity="error">{error}</Alert>}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', position: existPhotos ? 'relative' : 'fixed', bottom: 10, width: '100%' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', m: 2 }}>
         <Button variant="outlined" startIcon={<ArrowBackIcon />} onClick={handleClickGoBack}>Voltar</Button>
         <Button endIcon={<CheckIcon />} disabled={images?.length < 1} variant="contained" onClick={handleClickFinish}>Finalizar</Button>
       </Box>
