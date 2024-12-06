@@ -2,14 +2,13 @@ import React from 'react';
 import { Box, Typography } from '@mui/material';
 
 const ImageGallery = ({ images, selectedImage, setSelectedImage }) => {
-  console.log(images[0]?.image)
   return (
     <Box sx={{ width: '90svw', margin: '0 auto', textAlign: 'center' }}>
-      <Box sx={{ marginBottom: 2 }}>
-        {true ? (
+      <Box sx={{ padding: 2 }}>
+        {selectedImage?.image ? (
           <img
-            src={images[0]?.image}
-            alt="Selected"
+            src={selectedImage?.image}
+            alt={`Selecionada imagem: ${selectedImage?.id}`}
             style={{
               width: '100%',
               maxHeight: '450px',
@@ -41,8 +40,8 @@ const ImageGallery = ({ images, selectedImage, setSelectedImage }) => {
             onClick={() => setSelectedImage(img)}
             sx={{
               flex: '0 0 auto',
-              width: '120px',
-              height: '80px',
+              width: 100,
+              p: 1,
               cursor: 'pointer',
               borderRadius: '8px',
               overflow: 'hidden',
@@ -57,9 +56,9 @@ const ImageGallery = ({ images, selectedImage, setSelectedImage }) => {
               },
             }}
           >
-            <Typography key={img?.id}>{i + 1}º foto</Typography>
+            <Typography variant="button" key={img?.id}>{i + 1}º foto</Typography>
           </Box>
-        ))}
+        )).reverse()}
       </Box>
     </Box>
   );

@@ -2,6 +2,7 @@ import {
   Alert,
   Box,
   Button,
+  CircularProgress,
   FormControl,
   IconButton,
   InputLabel,
@@ -9,7 +10,7 @@ import {
   Select,
   Typography
 } from "@mui/material";
-import React, { useState, useRef, useEffect, useMemo } from "react";
+import React, { useState, useRef, useMemo } from "react";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import CheckIcon from '@mui/icons-material/Check';
@@ -43,20 +44,11 @@ function CameraScreen() {
   const { pathname, state } = useLocation()
   const pathData = useMemo(() => unescape(pathname)?.split('/'), [pathname])
   const { stepsMapping } = useData()
-  const { images } = useImages({step, os: state?.os})
+  const { images, deleteImage, isDeleting } = useImages({ step, os: state?.os })
   const existPhotos = useMemo(() => !!images?.length, [images])
-  
-  const removePhoto = () => {
-    // const currentImg = images.find((img) => img?.url === selectedImage?.url);
 
-    // if (currentImg) {
-    //   setImages((oldImages) => oldImages?.
-    //     filter((image) => image?.file?.name !== currentImg?.file?.name))
-    //   const nextIndex = images.indexOf(currentImg) + 1;
-    //   const newSelectedImage =
-    //     images[nextIndex] || images[0] || null;
-    //   setSelectedImage(newSelectedImage);
-    // }
+  const removePhoto = () => {
+    deleteImage(selectedImage?.id)
   }
 
   const takePhoto = (e) => {
@@ -79,40 +71,9 @@ function CameraScreen() {
     handleSubmit(data)
   }
 
-  const handleClickSave = async () => {
-    // const data = new FormData()
-    // data.append('os', pathData[2])
-    // data.append('sector', pathData[4])
-    // data.append('step', etapa)
-
-    // images.forEach((image) => {
-    //   data.append('images', image.file);
-    // });
-
-    // setLoading(true)
-
-    // try {
-    //   const response = await axios.post('/os/', data)
-    //   setLoading(false)
-    //   revokeImageURLs(images);
-    //   if (response.status === 200) {
-    //     navigate("/os", { state: { status: 'ok' } })
-    //   } else {
-    //     setError('Erro ao enviar as fotos. Tente novamente e se persistir entre em contato com o Administrador.')
-    //   }
-
-    // } catch (error) {
-    //   setLoading(false);
-    //   setError('Erro ao enviar as fotos. Tente novamente e se persistir, entre em contato com o Administrador.');
-    //   revokeImageURLs(images);
-    // }
-
+  const handleClickFinish = () => {
+    navigate("/os", { state: { status: 'ok' } })
   }
-
-  useEffect(() => {
-    if (step && images?.length)
-    setSelectedImage(images[0])
-  }, [images, step])
 
   return (
     <Box p={2} display="flex" flexDirection="column" height='100%' alignItems='center'>
@@ -137,7 +98,7 @@ function CameraScreen() {
       </div>
       <Box sx={{ borderRadius: 1, p: 1, boxShadow: existPhotos ? '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)' : null, mb: 2 }}>
         <Box sx={{ display: "flex", justifyContent: existPhotos ? "space-between" : "center", p: 1, alignItems: 'center' }}>
-          <Button
+          {loading ? <Loading /> : <Button
             disabled={step.length < 1}
             variant="contained"
             size="large"
@@ -146,7 +107,7 @@ function CameraScreen() {
             onClick={() => hiddenFileInput.current.click()}
           >
             Bater foto
-          </Button>
+          </Button>}
           <input
             type="file"
             accept="image/*,video/*"
@@ -156,9 +117,11 @@ function CameraScreen() {
             style={{ display: 'none' }}
           />
           {existPhotos && (
-            <IconButton variant="contained" size="large">
-              <DeleteIcon color='primary' onClick={removePhoto} />
-            </IconButton>
+            isDeleting
+              ? <Loading />
+              : <IconButton variant="contained" size="large">
+                <DeleteIcon color='primary' onClick={removePhoto} />
+              </IconButton>
           )}
         </Box>
         {existPhotos && step && <ImageGallery
@@ -170,9 +133,7 @@ function CameraScreen() {
       {error && <Alert severity="error">{error}</Alert>}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', position: 'fixed', bottom: 10, width: '90%' }}>
         <Button variant="outlined" startIcon={<ArrowBackIcon />} onClick={handleClickGoBack}>Voltar</Button>
-        {loading ? <Loading /> : (
-          <Button endIcon={<CheckIcon />} disabled={images?.length < 1} variant="contained" onClick={handleClickSave}>Enviar</Button>
-        )}
+        <Button endIcon={<CheckIcon />} disabled={images?.length < 1} variant="contained" onClick={handleClickFinish}>Finalizar</Button>
       </Box>
     </Box>
   )
