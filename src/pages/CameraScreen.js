@@ -1,14 +1,25 @@
-import { Alert, Box, Button, FormControl, IconButton, ImageList, ImageListItem, InputLabel, MenuItem, Select, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  FormControl,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+  Typography
+} from "@mui/material";
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import CheckIcon from '@mui/icons-material/Check';
 import { useLocation, useNavigate } from "react-router-dom/dist";
-import axios from '../api'
 import useData from "../hooks/useData";
 import DeleteIcon from '@mui/icons-material/Delete';
 import Loading from "../components/Loading";
 import ImageGallery from "../components/ImageGallery";
+import useSubmitData from "../hooks/useSubmitData";
+import useImages from "../hooks/useImages";
 
 
 const steps = {
@@ -23,92 +34,87 @@ const steps = {
   }
 }
 
-const revokeImageURLs = (images) => {
-  images.forEach((image) => {
-    URL.revokeObjectURL(image?.original);
-    URL.revokeObjectURL(image?.thumbnail);
-  });
-};
-
 function CameraScreen() {
   const hiddenFileInput = useRef(null);
-  const [images, setImages] = useState([])
   const [etapa, setEtapa] = useState('')
-  const [selectedImage, setSelectedImage] = useState(images[0]);
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-
+  const [selectedImage, setSelectedImage] = useState();
+  const { handleSubmit, loading, error } = useSubmitData()
   const navigate = useNavigate()
   const { pathname } = useLocation()
-
   const pathData = useMemo(() => unescape(pathname)?.split('/'), [pathname])
-  const existPhotos = useMemo(() => !!images?.length, [images])
-
   const { stepsMapping } = useData()
-
+  const step = pathData[4]
+  const os = "OS 999-24"
+  const { images } = useImages({step, os})
+  const existPhotos = useMemo(() => !!images?.length, [images])
+  
   const removePhoto = () => {
-    const currentImg = images.find((img) => img?.original === selectedImage?.original);
+    // const currentImg = images.find((img) => img?.url === selectedImage?.url);
 
-    if (currentImg) {
-      revokeImageURLs([currentImg])
-      setImages((oldImages) => oldImages?.
-        filter((image) => image?.file?.name !== currentImg?.file?.name))
-      const nextIndex = images.indexOf(currentImg) + 1;
-      const newSelectedImage =
-        images[nextIndex]|| images[0] || null;
-      setSelectedImage(newSelectedImage);
-    }
+    // if (currentImg) {
+    //   setImages((oldImages) => oldImages?.
+    //     filter((image) => image?.file?.name !== currentImg?.file?.name))
+    //   const nextIndex = images.indexOf(currentImg) + 1;
+    //   const newSelectedImage =
+    //     images[nextIndex] || images[0] || null;
+    //   setSelectedImage(newSelectedImage);
+    // }
   }
 
   const takePhoto = (e) => {
-    setImages(images => [{
-      original: URL.createObjectURL(e.target.files[0]),
+    sendPhoto({
       file: e.target.files[0]
-    }, ...images])
+    })
   }
 
   const handleClickGoBack = () => {
-    revokeImageURLs(images);
     navigate(-1)
   }
 
-  const handleClickSave = async () => {
-    const data = new FormData()
-    data.append('os', pathData[2])
-    data.append('sector', pathData[4])
-    data.append('step', etapa)
+  const sendPhoto = async (image) => {
+    const data = new FormData();
+    data.append('os', pathData[2]);
+    data.append('sector', pathData[4]);
+    data.append('step', etapa);
+    data.append('image', image?.file);
 
-    images.forEach((image) => {
-      data.append('images', image.file);
-    });
-
-    setLoading(true)
-
-    try {
-      const response = await axios.post('/os/', data)
-      setLoading(false)
-      revokeImageURLs(images);
-      if (response.status === 200) {
-        navigate("/os", { state: { status: 'ok' } })
-      } else {
-        setError('Erro ao enviar as fotos. Tente novamente e se persistir entre em contato com o Administrador.')
-      }
-
-    } catch (error) {
-      setLoading(false);
-      setError('Erro ao enviar as fotos. Tente novamente e se persistir, entre em contato com o Administrador.');
-      revokeImageURLs(images);
-    }
-
+    handleSubmit(data)
   }
 
-  useEffect(() => {
-    return () => revokeImageURLs(images)
-  }, [])
+  const handleClickSave = async () => {
+    // const data = new FormData()
+    // data.append('os', pathData[2])
+    // data.append('sector', pathData[4])
+    // data.append('step', etapa)
 
-  useEffect(() => {
-    setSelectedImage(images[0])
-  }, [images])
+    // images.forEach((image) => {
+    //   data.append('images', image.file);
+    // });
+
+    // setLoading(true)
+
+    // try {
+    //   const response = await axios.post('/os/', data)
+    //   setLoading(false)
+    //   revokeImageURLs(images);
+    //   if (response.status === 200) {
+    //     navigate("/os", { state: { status: 'ok' } })
+    //   } else {
+    //     setError('Erro ao enviar as fotos. Tente novamente e se persistir entre em contato com o Administrador.')
+    //   }
+
+    // } catch (error) {
+    //   setLoading(false);
+    //   setError('Erro ao enviar as fotos. Tente novamente e se persistir, entre em contato com o Administrador.');
+    //   revokeImageURLs(images);
+    // }
+
+  }
+  console.log(images)
+
+  // useEffect(() => {
+  //   setSelectedImage(images[0])
+  // }, [images])
 
   return (
     <Box p={2} display="flex" flexDirection="column" height='100%' alignItems='center'>
@@ -158,30 +164,10 @@ function CameraScreen() {
           )}
         </Box>
         {existPhotos && <ImageGallery
-            images={images}
-            selectedImage={selectedImage}
-            setSelectedImage={setSelectedImage}
-          />
-        // <Box sx={{ width: '90svw' }}>
-        //   <ImageList
-        //     sx={{ width: "100%", height: 450 }}
-        //     cols={2}
-        //     rowHeight={164}
-        //     gap={4}
-        //   >
-        //     {images?.map((img, i) => (
-        //       <ImageListItem key={img?.original}>
-        //         <img
-        //           src={img.original}
-        //           alt={`image ${i + 1}`}
-        //           width="100%"
-        //           loading="lazy"
-        //         />
-        //       </ImageListItem>
-        //     ))}
-        //   </ImageList>
-        //  </Box>
-        }
+          images={images}
+          selectedImage={selectedImage}
+          setSelectedImage={setSelectedImage}
+        />}
       </Box>
       {error && <Alert severity="error">{error}</Alert>}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', position: existPhotos ? 'static' : 'fixed', bottom: 10, width: '90%' }}>

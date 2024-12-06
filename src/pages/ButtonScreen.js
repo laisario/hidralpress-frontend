@@ -10,6 +10,7 @@ function ButtonScreen() {
   const navigate = useNavigate()
   const location = useLocation()
   const { sectors } = useData()
+  console.log(sectors)
 
   const handleClick = (sector) => {
     navigate(`${sector}/camera`)
