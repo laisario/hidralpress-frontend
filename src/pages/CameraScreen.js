@@ -37,7 +37,7 @@ const steps = {
 function CameraScreen() {
   const hiddenFileInput = useRef(null);
   const [step, setStep] = useState('')
-  const [selectedImage, setSelectedImage] = useState();
+  const [selectedImage, setSelectedImage] = useState(null);
   const { handleSubmit, loading, error } = useSubmitData()
   const navigate = useNavigate()
   const { pathname, state } = useLocation()
@@ -45,9 +45,9 @@ function CameraScreen() {
   const { stepsMapping } = useData()
   const { images, deleteImage, isDeleting } = useImages({ step, os: state?.os })
   const existPhotos = useMemo(() => !!images?.length, [images])
-  console.log(images)
   const removePhoto = () => {
     deleteImage(selectedImage?.id)
+    setSelectedImage(null)
   }
 
   const takePhoto = (e) => {
