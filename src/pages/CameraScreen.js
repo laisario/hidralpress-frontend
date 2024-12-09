@@ -118,7 +118,6 @@ function CameraScreen() {
             ref={hiddenFileInput}
             style={{ display: 'none' }}
           />
-          <VideoRecorder />
           {existPhotos && (
             isDeleting
               ? <Loading />
