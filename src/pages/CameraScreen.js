@@ -36,17 +36,23 @@ const steps = {
 }
 
 function CameraScreen() {
-  const hiddenFileInput = useRef(null);
   const [step, setStep] = useState('')
   const [selectedImage, setSelectedImage] = useState(null);
-  const { handleSubmit, loading, error } = useSubmitData()
-  const navigate = useNavigate()
-  const { pathname, state } = useLocation()
-  const pathData = useMemo(() => unescape(pathname)?.split('/'), [pathname])
+  
+  const { handleSubmit, loading, setLoading, error } = useSubmitData()
+  const location = useLocation()
   const { stepsMapping } = useData()
-  const { images, deleteImage, isDeleting } = useImages({ step, os: state?.os })
+  const pathname = location?.pathname
+  const state = location?.state
+  const { images, deleteImage, isLoading, setIsLoading, isLoadingImgs } = useImages({ step, os: state?.os })
+  
+  const hiddenFileInput = useRef(null);
+  const navigate = useNavigate()
+  const pathData = useMemo(() => unescape(pathname)?.split('/'), [pathname])
   const existPhotos = useMemo(() => !!images?.length, [images])
+  
   const removePhoto = () => {
+    setIsLoading(true)
     deleteImage(selectedImage?.id)
     setSelectedImage(null)
   }
@@ -67,7 +73,7 @@ function CameraScreen() {
     data.append('sector', pathData[4]);
     data.append('step', step);
     data.append('image', image?.file);
-
+    setLoading(true)
     handleSubmit(data)
   }
 
@@ -112,24 +118,26 @@ function CameraScreen() {
           }
           <input
             type="file"
-            accept="image/*,video/*"
+            accept="image/*"
             capture="environment"
             onChange={takePhoto}
             ref={hiddenFileInput}
             style={{ display: 'none' }}
           />
           {existPhotos && (
-            isDeleting
+            isLoading
               ? <Loading />
               : <IconButton size="large">
                 <DeleteIcon color='primary' onClick={removePhoto} />
               </IconButton>
           )}
         </Box>
+        {/* <VideoRecorder /> */}
         {existPhotos && step && <ImageGallery
           images={images}
           selectedImage={selectedImage}
           setSelectedImage={setSelectedImage}
+          isLoadingImgs={isLoadingImgs}
         />}
       </Box>
       {error && <Alert severity="error">{error}</Alert>}

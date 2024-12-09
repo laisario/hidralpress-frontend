@@ -1,7 +1,8 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
+import Loading from "./Loading";
 
-const ImageGallery = ({ images, selectedImage, setSelectedImage }) => {
+const ImageGallery = ({ images, selectedImage, setSelectedImage, isLoadingImgs }) => {
   return (
     <Box sx={{ width: '90svw', margin: '0 auto', textAlign: 'center' }}>
       <Box sx={{ padding: 2 }}>
@@ -34,7 +35,7 @@ const ImageGallery = ({ images, selectedImage, setSelectedImage }) => {
           },
         }}
       >
-        {images?.map((img, i) => (
+        {isLoadingImgs ? <Loading /> : images?.map((img, i) => (
           <Box
             key={img?.image}
             onClick={() => setSelectedImage(img)}

@@ -14,14 +14,14 @@ const fetchImages = async (step, os) => {
 
 const useImages = ({ step, os }) => {
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false)
 
   const queryClient = useQueryClient();
 
-  const { data, isError, isLoading } = useQuery({
+  const { data, isError, isLoading: isLoadingImgs } = useQuery({
     queryKey: ['images', step, os],
     queryFn: () => fetchImages(step.toUpperCase(), os)
   });
-
   const deleteImg = async (imgId) => {
     const response = await axios.delete(`/images/${imgId}`);
     return response.data;
@@ -31,8 +31,10 @@ const useImages = ({ step, os }) => {
     mutationFn: deleteImg,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['images'] });
+      setIsLoading(false)
     },
     onError: (error) => {
+      setIsLoading(false)
       setError('Erro ao deletar a foto. Tente novamente e se persistir, entre em contato com o Administrador.');
     },
   });
@@ -41,9 +43,11 @@ const useImages = ({ step, os }) => {
     images: data,
     isError,
     isLoading,
+    setIsLoading,
     error,
     deleteImage,
     isDeleting,
+    isLoadingImgs,
   })
 };
 
