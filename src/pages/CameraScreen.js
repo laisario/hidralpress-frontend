@@ -99,26 +99,16 @@ function CameraScreen() {
       <Box sx={{ borderRadius: 1, p: 1, boxShadow: existPhotos ? '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)' : null, mb: 2 }}>
         <Box sx={{ display: "flex", justifyContent: existPhotos ? "space-between" : "center", p: 1, alignItems: 'center' }}>
           {loading ? <Loading /> :
-            <Box>
-              <Button
-                disabled={step.length < 1}
-                variant="contained"
-                size="large"
-                startIcon={<AddAPhotoIcon />}
-                fullWidth={!existPhotos}
-                onClick={() => hiddenFileInput.current.click()}
-              >
-                Bater foto
-              </Button>
-              {/* <Button
-                disabled={step.length < 1}
-                variant="contained"
-                fullWidth={!existPhotos}
-                onClick={() => hiddenFileInput.current.click()}
-              >
-                Gravar video
-              </Button> */}
-            </Box>
+            <Button
+              disabled={step.length < 1}
+              variant="contained"
+              size="large"
+              startIcon={<AddAPhotoIcon />}
+              fullWidth={!existPhotos}
+              onClick={() => hiddenFileInput.current.click()}
+            >
+              Bater foto
+            </Button>
           }
           <input
             type="file"
