@@ -41,6 +41,7 @@ const ImageGallery = ({ images, selectedImage, setSelectedImage }) => {
             sx={{
               flex: '0 0 auto',
               width: 100,
+              height: 100,
               p: 1,
               cursor: 'pointer',
               borderRadius: '8px',
@@ -54,9 +55,23 @@ const ImageGallery = ({ images, selectedImage, setSelectedImage }) => {
               '&:hover': {
                 transform: 'scale(1.05)',
               },
+              position: 'relative',
             }}
           >
-            <Typography variant="button" key={img?.id}>{i + 1}º foto</Typography>
+            <img
+              src={img?.image}
+              key={img?.id}
+              style={{
+                position: 'absolute', 
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                minWidth: '100%',
+                minHeight: '100%',
+                objectFit: 'cover',
+              }}
+              alt={`Imagem ${i + 1}`}
+            />
           </Box>
         )).reverse()}
       </Box>
