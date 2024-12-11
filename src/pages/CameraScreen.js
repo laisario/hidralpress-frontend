@@ -45,7 +45,7 @@ function CameraScreen() {
   const pathname = location?.pathname
   const state = location?.state
   const { images, deleteImage, isLoading, setIsLoading, isLoadingImgs } = useImages({ step, os: state?.os })
-  
+  console.log(images)
   const hiddenFileInput = useRef(null);
   const navigate = useNavigate()
   const pathData = useMemo(() => unescape(pathname)?.split('/'), [pathname])

@@ -6,9 +6,9 @@ const ImageGallery = ({ images, selectedImage, setSelectedImage, isLoadingImgs }
   return (
     <Box sx={{ width: '90svw', margin: '0 auto', textAlign: 'center' }}>
       <Box sx={{ padding: 2 }}>
-        {selectedImage?.image ? (
+        {selectedImage?.thumbnail ? (
           <img
-            src={selectedImage?.image}
+            src={selectedImage?.thumbnail}
             alt={`Selecionada imagem: ${selectedImage?.id}`}
             style={{
               width: '100%',
@@ -16,6 +16,7 @@ const ImageGallery = ({ images, selectedImage, setSelectedImage, isLoadingImgs }
               objectFit: 'contain',
               borderRadius: '8px',
             }}
+            loading="lazy"
           />
         ) : (
           <Typography variant="h6" color="text.secondary">
@@ -37,7 +38,7 @@ const ImageGallery = ({ images, selectedImage, setSelectedImage, isLoadingImgs }
       >
         {isLoadingImgs ? <Loading /> : images?.map((img, i) => (
           <Box
-            key={img?.image}
+            key={img?.thumbnail}
             onClick={() => setSelectedImage(img)}
             sx={{
               flex: '0 0 auto',
@@ -47,9 +48,9 @@ const ImageGallery = ({ images, selectedImage, setSelectedImage, isLoadingImgs }
               cursor: 'pointer',
               borderRadius: '8px',
               overflow: 'hidden',
-              border: selectedImage?.image === img?.image ? '3px solid #003366' : 'none',
+              border: selectedImage?.thumbnail === img?.thumbnail ? '3px solid #003366' : 'none',
               boxShadow:
-                selectedImage?.image === img?.image
+                selectedImage?.thumbnail === img?.thumbnail
                   ? '0 0 10px rgba(0, 51, 102, 0.7)'
                   : 'none',
               transition: 'transform 0.2s, border 0.2s',
@@ -60,7 +61,7 @@ const ImageGallery = ({ images, selectedImage, setSelectedImage, isLoadingImgs }
             }}
           >
             <img
-              src={img?.image}
+              src={img?.thumbnail}
               key={img?.id}
               style={{
                 position: 'absolute', 
@@ -72,6 +73,7 @@ const ImageGallery = ({ images, selectedImage, setSelectedImage, isLoadingImgs }
                 objectFit: 'cover',
               }}
               alt={`Imagem ${i + 1}`}
+              loading="lazy"
             />
           </Box>
         )).reverse()}

@@ -15,7 +15,7 @@ const fetchImages = async (step, os) => {
 const useImages = ({ step, os }) => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false)
-
+  console.log(step, os)
   const queryClient = useQueryClient();
 
   const { data, isError, isLoading: isLoadingImgs } = useQuery({
@@ -26,6 +26,7 @@ const useImages = ({ step, os }) => {
     const response = await axios.delete(`/images/${imgId}`);
     return response.data;
   }
+  console.log(data)
 
   const { mutate: deleteImage, isLoading: isDeleting} = useMutation({
     mutationFn: deleteImg,
