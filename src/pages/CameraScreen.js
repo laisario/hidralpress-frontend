@@ -51,16 +51,25 @@ function CameraScreen() {
   const pathData = useMemo(() => unescape(pathname)?.split('/'), [pathname])
   const existPhotos = useMemo(() => !!images?.length, [images])
   
+  const processingQueue = useRef(Promise.resolve());
   const removePhoto = () => {
     setIsLoading(true)
     deleteImage(selectedImage?.id)
     setSelectedImage(null)
   }
 
-  const takePhoto = (e) => {
-    sendPhoto({
-      file: e.target.files[0]
-    })
+  const takePhoto = async (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      try {
+        processingQueue.current = await processingQueue.current
+        await sendPhoto(file)
+      } catch (e) {
+        console.error("Image error: ", e)
+      } finally {
+        e.target.value = null
+      }
+    }
   }
 
   const handleClickGoBack = () => {
@@ -72,7 +81,7 @@ function CameraScreen() {
     data.append('os', pathData[2]);
     data.append('sector', pathData[4]);
     data.append('step', step);
-    data.append('image', image?.file);
+    data.append('image', image);
     setLoading(true)
     handleSubmit(data)
   }
